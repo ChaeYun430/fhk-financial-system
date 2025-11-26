@@ -3,7 +3,6 @@ package com.fhk.payment.config;
 import com.fhk.security.core.interfaces.TokenGuard;
 import com.fhk.security.core.jwt.JwtVerifier;
 import com.fhk.security.core.jwt.config.DefaultWhiteList;
-import com.fhk.security.core.jwt.filter.JwtAuthFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,12 +21,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
 	// POLICY : api-gateway에서 jwt 검증 완료 (access 토큰을 전달함)
-	// TODO :  인증, 인가 로직 구현 필요
-	//		인증 : 결제시스템 서비스에 등록된 사용자인지 판별 후 회원정보 입력하도록 유도
+	//			인증 : 결제시스템 서비스에 등록된 사용자인지 판별 후 회원정보 입력하도록 유도
+	// TODO :  인가 로직 구현 필요
 	//		인가 : 인터셉터로 서비스에서 권한 검증
 
 	@Bean
-	SecurityFilterChain filterChain(HttpSecurity http, JwtVerifier jwtVerifier, TokenGuard tokenGuard) throws Exception {
+	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
 		http.csrf(AbstractHttpConfigurer::disable)
 				.sessionManagement(sm -> {
@@ -57,6 +56,7 @@ public class SecurityConfig {
 
 							// 이 외 모든 endpoint 에 인증 수행
 							auth
+									// TODO : confirm은 csrf허용으로 진입, 요청헤더의 사용자 정보가 유지되도록
 									.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 									.requestMatchers("/api/auth/v1/**").permitAll()
 									.requestMatchers(HttpMethod.POST, "/api/accounts").permitAll()
@@ -66,6 +66,7 @@ public class SecurityConfig {
 				.formLogin(AbstractHttpConfigurer::disable)
 				.httpBasic(AbstractHttpConfigurer::disable)
 				.exceptionHandling(e -> {
+
 					// AuthenticationException만 401로
 					e.authenticationEntryPoint((req, res, ex) -> {
 						res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
@@ -75,20 +76,9 @@ public class SecurityConfig {
 					e.accessDeniedHandler((req, res, ex) -> {
 						res.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden");
 					});
-				})
-
-				// jwt 필터 추가부분
-				.addFilterBefore(new JwtAuthFilter(jwtVerifier, tokenGuard), UsernamePasswordAuthenticationFilter.class);
+				});
 
 		return http.build();
 	}
 
-	/**
-	 * 비밀번호 검증용 인코더
-	 * @return
-	 */
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
 }

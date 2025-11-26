@@ -1,9 +1,11 @@
 package com.fhk.payment.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.cloud.bootstrap.encrypt.KeyProperties;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Component("authEvaluator")
@@ -12,12 +14,10 @@ public class AuthEvaluator {//  MethodSecurityInterceptor 호출시 SpEL용 클�
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    public boolean authorize(String accountId) {
+    public boolean isMerchant(String accountId) {
 
-        //redisTemplate.opsForZSet().add("key", accountId, 1);
-
-        return false;
-
+        String storedRole = Objects.requireNonNull(redisTemplate.opsForValue().get("account:" + accountId + ":role"));
+        return storedRole.equals("merchant");
     }
 
     //SpEL이 실제로 쓰이는 곳:

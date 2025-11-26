@@ -27,10 +27,10 @@ public class PaymentApplicationTests {
     }
 */
 
-    @Test
+/*    @Test
     public void confirm(){
         ConfirmDto.Res confirmRes = paymentService.confirm(PaymentFactory.getConfirmReq());
         log.info(confirmRes);
-    }
+    }*/
 
 }

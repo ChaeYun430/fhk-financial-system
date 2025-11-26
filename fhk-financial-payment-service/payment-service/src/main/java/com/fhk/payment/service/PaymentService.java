@@ -5,7 +5,6 @@ import com.fhk.api.cllient.TossClient;
 import com.fhk.api.dto.toss.Payment;
 import com.fhk.payment.domain.PaymentEntity;
 import com.fhk.api.dto.ConfirmDto;
-import com.fhk.api.dto.PayDto;
 import com.fhk.payment.dto.EventDto;
 import com.fhk.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +12,7 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Import;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -46,8 +46,8 @@ public class PaymentService {
 
 
     // merchant
-    //@PreAuthorize("@authEvaluator.authorizeReview(#req.reviewId, principal.getUsername())")
-    public ConfirmDto.Res confirm(ConfirmDto.Req confirmReq) {
+    @PreAuthorize("@authEvaluator.isMerchant(#accountId)")
+    public void confirm(ConfirmDto.Req confirmReq, Long accountId) {
 
         // TODO : 승인 성공 후  변경사항에 따라 modelmapper 또는 findById 쓰기
         Payment payment = tossClient.confirm(confirmReq);
@@ -66,7 +66,7 @@ public class PaymentService {
 
         }, executor);
 
-        return new ConfirmDto.Res(payment);
+        new ConfirmDto.Res(payment);
     }
 
 
