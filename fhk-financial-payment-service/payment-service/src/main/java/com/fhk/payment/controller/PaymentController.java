@@ -4,11 +4,14 @@ import com.fhk.api.cllient.TossClient;
 import com.fhk.api.dto.ConfirmDto;
 import com.fhk.api.dto.PayDto;
 import com.fhk.api.dto.toss.Payment;
+import com.fhk.common.api.ApiResponse;
+import com.fhk.common.api.ApiWrapper;
 import com.fhk.payment.service.PaymentService;
 import com.fhk.security.core.record.FhkUserPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -22,45 +25,52 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-
-    @PostMapping("/confirm")
-    public ResponseEntity<ConfirmDto.Res> confirm(@RequestBody ConfirmDto.Req confirmReq,
-                                                  @AuthenticationPrincipal FhkUserPrincipal fhkUser) {
+    // POLICY : 고객이 결제 요청 전 데이터 무결성을 위한 결제 데이터 저장
+    @PostMapping("/pay")
+    public ResponseEntity<ApiWrapper<PayDto.Res>> pay(
+            @RequestBody PayDto.Req payReq,
+            @AuthenticationPrincipal FhkUserPrincipal fhkUser) {
 
         Long accountId = fhkUser.id();
-        paymentService.confirm(confirmReq, accountId);
-        return null;
+        PayDto.Res payRes = paymentService.pay(payReq, accountId);
+
+        return ApiResponse.ok(payRes);
     }
 
+
+    //  POLICY : 승인 결과에 대해 타 서비스에 상태전이 이벤트 전송, 고객에게 알림 발송
+    //           Toss로부터 받은 리다이렉션으로 작동
     @GetMapping("/confirm")
-    public ResponseEntity confirmPayment(
+    public ResponseEntity<ApiWrapper<ConfirmDto.Res>> confirm(
             @RequestParam String paymentKey,
             @RequestParam String orderId,
             @RequestParam int amount) {
 
-        ConfirmDto.Req req = new ConfirmDto.Req(paymentKey, orderId, amount);
+        ConfirmDto.Req confirmReq = new ConfirmDto.Req(paymentKey, orderId, amount);
+        ConfirmDto.Res confirmRes = paymentService.confirm(confirmReq);
 
-        log.info("get confirm"+ req.toString());
-        // TODO : store에게 notification
+        return ApiResponse.ok(confirmRes);
+    }
 
-        // 처리 후 리다이렉트 페이지
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<Payment> searchByOrder(@PathVariable String orderId,
+                                                @AuthenticationPrincipal FhkUserPrincipal fhkUser) {
+
         return null;
     }
+    @GetMapping("/{paymentKey}")
+    public ResponseEntity<Payment> searchByPayment(@RequestBody String paymentKey) {
+        return null;
+    }
+
+
 /*    @PostMapping("/cancel")
     public ResponseEntity<PayRes> cancel(@RequestBody PayReq payReq) {
         return null;
-    }
-
-    @GetMapping("/{orderId}")
-    public ResponseEntity<PayRes> searchByOrder(@PathVariable String orderId) {
-        tossClient.searchByOrder(orderId);
-        return null;
-    }
-
-    @GetMapping("/{paymentKey}")
-    public ResponseEntity<PayRes> searchByPayment(@RequestBody String paymentKey) {
-        return null;
     }*/
+
+
 
     //searchByAccount
 

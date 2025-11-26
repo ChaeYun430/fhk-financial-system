@@ -2,6 +2,8 @@ package com.fhk.payment.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fhk.api.cllient.TossClient;
+import com.fhk.api.dto.PayDto;
+import com.fhk.api.dto.SearchDto;
 import com.fhk.api.dto.toss.Payment;
 import com.fhk.payment.domain.PaymentEntity;
 import com.fhk.api.dto.ConfirmDto;
@@ -36,18 +38,17 @@ public class PaymentService {
     //private final OutboxRepository outboxRepository;
 
 
-    // INTENT : 프론트에서 처리하여 pg로 바로 보내고 성공시 응답을 confirm으로 리다이렉션
-    // customer
-    // public PaymentEntity pay(PayDto.Req payReq) {
-    //     PaymentEntity payment = new PaymentEntity(payReq.getOrderId(), payReq.getAmount());
-    //     payment = paymentRepo.save(payment);
-    //     return payment;
-    // }
+    @PreAuthorize("@authEvaluator.isCustomer(#accountId)")
+    public PayDto.Res pay(PayDto.Req payReq, Long accountId) {
+
+       PaymentEntity payment = modelMapper.map(payReq, PaymentEntity.class);
+       paymentRepo.save(payment);
+       PayDto.Res payRes = new PayDto.Res(payReq.getOrderId(), "saved");
+       return payRes;
+    }
 
 
-    // merchant
-    @PreAuthorize("@authEvaluator.isMerchant(#accountId)")
-    public void confirm(ConfirmDto.Req confirmReq, Long accountId) {
+    public ConfirmDto.Res confirm(ConfirmDto.Req confirmReq) {
 
         // TODO : 승인 성공 후  변경사항에 따라 modelmapper 또는 findById 쓰기
         Payment payment = tossClient.confirm(confirmReq);
@@ -66,7 +67,7 @@ public class PaymentService {
 
         }, executor);
 
-        new ConfirmDto.Res(payment);
+        return new ConfirmDto.Res(payment);
     }
 
 
@@ -94,7 +95,12 @@ public class PaymentService {
 
     }
 
+    public Payment searchByOrder(SearchDto searchDto) {
 
+        tossClient.searchByOrder(orderId);
+        return
+    }
 
+    public Payment searchByPayment(String paymentKey) {}
 
 }

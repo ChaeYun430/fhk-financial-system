@@ -2,6 +2,7 @@ package com.fhk.api.cllient;
 
 import com.fhk.api.dto.ConfirmDto;
 import com.fhk.api.dto.PayDto;
+import com.fhk.api.dto.SearchDto;
 import com.fhk.api.dto.toss.Payment;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,10 +49,18 @@ public class TossClient implements PgClient {
         }
 
 
-       public Mono<Payment> searchByOrder(String orderId) {
+       public Payment searchByOrder(SearchDto orderId) {
+
+           String confirmUrl = baseUrl + "/v1/payments/confirm";
+           return restTemplate.postForObject(confirmUrl, confirmReq, Payment.class);
+       }
+
+
+       public Payment searchByPayment(String paymentKey) {
 
             return null;
-        }
+       }
+
 
 
 /*

@@ -56,7 +56,9 @@ public class SecurityConfig {
 
 							// 이 외 모든 endpoint 에 인증 수행
 							auth
-									// TODO : confirm은 csrf허용으로 진입, 요청헤더의 사용자 정보가 유지되도록
+									// TODO : confirm은 csrf이 아닌 http get으로 진입, 요청헤더의 사용자 정보가 유지되도록
+									.requestMatchers(HttpMethod.GET, "payment/confirm").permitAll()
+
 									.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 									.requestMatchers("/api/auth/v1/**").permitAll()
 									.requestMatchers(HttpMethod.POST, "/api/accounts").permitAll()

@@ -18,6 +18,9 @@ public class PaymentEntity {
     private String paymentKey;
 
     @Column
+    private String accountId;
+
+    @Column
     private String orderId;
 
     @Column

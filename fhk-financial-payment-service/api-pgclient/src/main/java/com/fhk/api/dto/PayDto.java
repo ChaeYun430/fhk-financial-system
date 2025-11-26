@@ -16,13 +16,16 @@ public class PayDto {
 
         private String orderId;
         private long amount;
+        private String accountId;
     }
 
     @Getter
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class Res {
 
-        private Payment payment;
+        private String orderId;
+        private String status;
 
     }
 

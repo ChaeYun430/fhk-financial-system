@@ -14,10 +14,10 @@ public class AuthEvaluator {//  MethodSecurityInterceptor 호출시 SpEL용 클�
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    public boolean isMerchant(String accountId) {
+    public boolean isCustomer(String accountId) {
 
         String storedRole = Objects.requireNonNull(redisTemplate.opsForValue().get("account:" + accountId + ":role"));
-        return storedRole.equals("merchant");
+        return storedRole.equals("customer");
     }
 
     //SpEL이 실제로 쓰이는 곳:
