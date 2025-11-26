@@ -19,11 +19,13 @@ public class PaymentApplicationTests {
     @Autowired
     private PaymentService paymentService;
 
+/*
     @Test
     public void pay(){
         PaymentEntity payment = paymentService.pay(PaymentFactory.getPayReq());
         log.info(payment);
     }
+*/
 
     @Test
     public void confirm(){

@@ -21,13 +21,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-	/**
-	 * [인증, 인가]
-	 * JWT + Bearer Token ( JWT는 세션을 쓰지않고 클라이언트에서 토큰을 들고 api 호출시마다 토큰을 보낸다. 모바일앱에서 사용하는 api 혹은 MSA 개발시 사용된다 )
-	 * <p>
-	 * 어플리케이션 시작시
-	 * SecurityFilterChain 객체를 Bean 으로 등록
-	 */
+	// POLICY : api-gateway에서 jwt 검증 완료 (access 토큰을 전달함)
+	// TODO :  인증, 인가 로직 구현 필요
+	//		인증 : 결제시스템 서비스에 등록된 사용자인지 판별 후 회원정보 입력하도록 유도
+	//		인가 : 인터셉터로 서비스에서 권한 검증
+
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http, JwtVerifier jwtVerifier, TokenGuard tokenGuard) throws Exception {
 

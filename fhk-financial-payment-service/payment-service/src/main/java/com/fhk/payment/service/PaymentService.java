@@ -36,16 +36,17 @@ public class PaymentService {
     //private final OutboxRepository outboxRepository;
 
 
+    // INTENT : 프론트에서 처리하여 pg로 바로 보내고 성공시 응답을 confirm으로 리다이렉션
     // customer
-    public PaymentEntity pay(PayDto.Req payReq) {
-
-        PaymentEntity payment = new PaymentEntity(payReq.getOrderId(), payReq.getAmount());
-        payment = paymentRepo.save(payment);
-        return payment;
-    }
+    // public PaymentEntity pay(PayDto.Req payReq) {
+    //     PaymentEntity payment = new PaymentEntity(payReq.getOrderId(), payReq.getAmount());
+    //     payment = paymentRepo.save(payment);
+    //     return payment;
+    // }
 
 
     // merchant
+    //@PreAuthorize("@authEvaluator.authorizeReview(#req.reviewId, principal.getUsername())")
     public ConfirmDto.Res confirm(ConfirmDto.Req confirmReq) {
 
         // TODO : 승인 성공 후  변경사항에 따라 modelmapper 또는 findById 쓰기
