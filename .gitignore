@@ -1,0 +1,48 @@
+# -------------------------
+# Gradle
+# -------------------------
+HELP.md
+.gradle/
+build/
+**/build/
+
+# Gradle Wrapper
+gradle/wrapper/gradle-wrapper.jar
+gradle/wrapper/gradle-wrapper.properties
+
+# -------------------------
+# IDE: IntelliJ
+# -------------------------
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+**/out/
+
+# -------------------------
+# IDE: STS / Eclipse
+# -------------------------
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+bin/
+**/bin/
+
+# -------------------------
+# VS Code
+# -------------------------
+.vscode/
+
+# -------------------------
+# NetBeans
+# -------------------------
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
