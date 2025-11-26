@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: api-pgclient
+
+  cloud:
+    config:
+      enabled: false
+
+  profiles:
+    active: dev
+
+server:
+  port: 8084
+
+tosspayments:
+  secret-key: test_sk_d46qopOB89ZOzRqjEYNL3ZmM75y0
+
+payment:
+  default-amount: 1000
+  default-currency: KRW
+

@@ -1,0 +1,91 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.5' apply(false)
+    id 'io.spring.dependency-management' version '1.1.7' apply(false)
+}
+
+allprojects {
+    group = 'com.fhk'
+    version = 'v0.0.1'
+    sourceCompatibility = '21'
+    description = 'fhk-financial-payment-service'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+subprojects { // setting.gradle에서 include된 모든 프로젝트에 공통적으로 적용할 설정
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'java-test-fixtures'
+
+    repositories {
+        mavenCentral()
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    ext {
+        springCloudVersion = "2025.0.0"
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+        }
+    }
+
+    dependencies {
+
+        implementation files("${rootDir}/libs/fhk-common-1.0.0-plain.jar")
+        implementation files("${rootDir}/libs/fhk-core-1.0.0-plain.jar")
+        implementation files("${rootDir}/libs/fhk-security-core-1.0.0-plain.jar")
+
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        implementation 'org.springframework.boot:spring-boot-starter'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        developmentOnly 'org.springframework.boot:spring-boot-devtools'
+        implementation 'org.modelmapper:modelmapper:3.1.0'
+        annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+        implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+        implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+        runtimeOnly 'com.mysql:mysql-connector-j'
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+        implementation "org.springframework.boot:spring-boot-starter-data-redis"
+        implementation 'org.springframework.cloud:spring-cloud-stream'
+        implementation 'org.springframework.cloud:spring-cloud-stream-binder-kafka'
+
+        implementation "org.springframework.boot:spring-boot-starter-actuator"
+        implementation "org.springframework.cloud:spring-cloud-starter-config"
+        implementation "org.springframework.boot:spring-boot-starter-webflux"
+
+        testImplementation 'org.springframework.cloud:spring-cloud-stream-test-binder'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.springframework.security:spring-security-test'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+        testCompileOnly 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
+
+    }
+    test {
+        useJUnitPlatform()
+    }
+}

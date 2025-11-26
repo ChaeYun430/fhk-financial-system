@@ -1,0 +1,41 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: fhk-financial-payment-service
+
+  datasource:
+    username: fhkuser
+    password: fhkuser
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://34.158.205.146:3306/fhk_database?useSSL=false&serverTimezone=Asia/Seoul
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: '1000'
+        format_sql: 'true'
+        show_sql: 'true'
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+  cloud:
+    config:
+      enabled: false
+
+tosspayments:
+  secret-key: test_sk_d46qopOB89ZOzRqjEYNL3ZmM75y0
+
+#    redis:
+#      port: ${REDIS_PORT}
+
+
+#jwt:
+#  issuer: # 발급 서버에서 사용
+#    private-key-path: /app/keys/jwt-private.pem
+#    access-expire-ms: 900000       # 15분
+#    refresh-expire-ms: 1209600000   # 14일
+
+#  verifier: # JWT 인증시 사용
+#    public-key-path: /app/keys/jwt-public.pem

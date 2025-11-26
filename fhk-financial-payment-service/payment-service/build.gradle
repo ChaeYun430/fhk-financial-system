@@ -1,0 +1,7 @@
+dependencies {
+
+    implementation project(':api-pgclient')
+    testImplementation project(':api-pgclient')
+    testFixturesImplementation project(':api-pgclient')
+
+}
