@@ -1,22 +1,19 @@
 package com.fhk.api.cllient;
 
+import com.fhk.api.dto.CancelDto;
 import com.fhk.api.dto.ConfirmDto;
-import com.fhk.api.dto.PayDto;
-import com.fhk.api.dto.SearchDto;
+import com.fhk.api.dto.VirtualDto;
 import com.fhk.api.dto.toss.Payment;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Log4j2
@@ -49,40 +46,38 @@ public class TossClient implements PgClient {
         }
 
 
-       public Payment searchByOrder(SearchDto orderId) {
+        public Payment searchByPayment(String paymentKey) {
 
-           String confirmUrl = baseUrl + "/v1/payments/confirm";
-           return restTemplate.postForObject(confirmUrl, confirmReq, Payment.class);
-       }
-
-
-       public Payment searchByPayment(String paymentKey) {
-
-            return null;
-       }
-
-
-
-/*
-        public PaymentEntity cancel(CancelReq cancelReq) {
-            Mono<CancelRes> response = webClient.post()
-                    .uri("/v1/payments/{paymentKey}/cancel")
-                    .attribute("paymentKey", cancelReq.getPaymentKey())
-                    .retrieve()
-                    .bodyToMono(CancelRes.class);
-
-
-            return null;
+            String searchUrl = baseUrl + "/v1/payments/{paymentKey}";
+            Map<String, String> param = new HashMap<>();
+            param.put("paymentKey", paymentKey);
+            return restTemplate.getForObject(searchUrl, Payment.class, param);
         }
 
-        public PaymentEntity virtual(VirtualReq virtualReq) {
-            Mono<VirtualRes> response = webClient.post()
-                    .uri("/v1/virtual-accounts")
-                    .bodyValue(virtualReq)
-                    .retrieve()
-                    .bodyToMono(VirtualRes.class);
-            return null;
-        }*/
+       public Payment searchByOrder(String orderId) {
+
+           String searchUrl = baseUrl + "/v1/payments/orders/{orderId}";
+           Map<String, String> param = new HashMap<>();
+           param.put("orderId", orderId);
+           return restTemplate.getForObject(searchUrl, Payment.class, param);
+       }
+
+
+       //   TODO : dto 필드가 완전히 일치해야 하는지
+        public Payment cancel(CancelDto.Req cancelReq) {
+
+           String cancelUrl = baseUrl + "/v1/payments/{paymentKey}/cancel";
+           Map<String, String> param = new HashMap<>();
+           param.put("paymentKey", cancelReq.getPaymentKey());
+           return restTemplate.postForObject(cancelUrl, cancelReq, Payment.class, param);
+        }
+
+
+        public Payment virtual(VirtualDto.Req virtualReq) {
+
+            String virtualUrl = baseUrl + "/v1/virtual-accounts";
+            return restTemplate.postForObject(virtualUrl, virtualReq, Payment.class);
+        }
 
 }
 

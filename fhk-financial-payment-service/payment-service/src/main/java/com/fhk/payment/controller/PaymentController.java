@@ -1,8 +1,7 @@
 package com.fhk.payment.controller;
 
 import com.fhk.api.cllient.TossClient;
-import com.fhk.api.dto.ConfirmDto;
-import com.fhk.api.dto.PayDto;
+import com.fhk.api.dto.*;
 import com.fhk.api.dto.toss.Payment;
 import com.fhk.common.api.ApiResponse;
 import com.fhk.common.api.ApiWrapper;
@@ -11,7 +10,6 @@ import com.fhk.security.core.record.FhkUserPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -53,27 +51,46 @@ public class PaymentController {
     }
 
 
+    //  FIXME : dto가 단순한 필드를 감싸는 법 정하기
     @GetMapping("/{orderId}")
-    public ResponseEntity<Payment> searchByOrder(@PathVariable String orderId,
-                                                @AuthenticationPrincipal FhkUserPrincipal fhkUser) {
+    public ResponseEntity<ApiWrapper<Payment>> searchByOrder(@PathVariable SearchDto.OrderId orderId,
+                                                             @AuthenticationPrincipal FhkUserPrincipal fhkUser) {
+        Long accountId = fhkUser.id();
+        Payment paymentRes = paymentService.searchByOrder(orderId, accountId);
 
-        return null;
+        return ApiResponse.ok(paymentRes);
     }
     @GetMapping("/{paymentKey}")
-    public ResponseEntity<Payment> searchByPayment(@RequestBody String paymentKey) {
-        return null;
+    public ResponseEntity<ApiWrapper<Payment>> searchByPayment(@PathVariable SearchDto.PaymentKey paymentKey,
+                                                               @AuthenticationPrincipal FhkUserPrincipal fhkUser) {
+        Long accountId = fhkUser.id();
+        Payment paymentRes = paymentService.searchByPayment(paymentKey, accountId);
+
+        return ApiResponse.ok(paymentRes);
     }
 
 
-/*    @PostMapping("/cancel")
-    public ResponseEntity<PayRes> cancel(@RequestBody PayReq payReq) {
-        return null;
-    }*/
+    @PostMapping("/cancel")
+    public ResponseEntity<ApiWrapper<CancelDto.Res>> cancel(@RequestBody CancelDto.Req cancelReq,
+                                                            @AuthenticationPrincipal FhkUserPrincipal fhkUser) {
+        Long accountId = fhkUser.id();
+        CancelDto.Res cancelRes = paymentService.cancel(cancelReq, accountId);
+
+        return ApiResponse.ok(cancelRes);
+    }
 
 
+    @PostMapping("/virtual")
+    public ResponseEntity<ApiWrapper<VirtualDto.Res>> cancel(@RequestBody VirtualDto.Req virtualReq,
+                                                             @AuthenticationPrincipal FhkUserPrincipal fhkUser) {
+        Long accountId = fhkUser.id();
+        virtualReq.setCustomerName(fhkUser.getName());
+        VirtualDto.Res virtaulRes = paymentService.virtual(virtualReq, accountId);
 
-    //searchByAccount
+        return ApiResponse.ok(virtaulRes);
+    }
 
 
 }
 
+//searchByAccount

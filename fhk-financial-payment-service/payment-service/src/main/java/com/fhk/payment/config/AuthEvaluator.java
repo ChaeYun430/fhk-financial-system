@@ -1,5 +1,8 @@
 package com.fhk.payment.config;
 
+import com.fhk.api.dto.toss.Payment;
+import com.fhk.payment.domain.PaymentEntity;
+import com.fhk.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -13,13 +16,26 @@ public class AuthEvaluator {//  MethodSecurityInterceptor 호출시 SpEL용 클�
 
 
     private final RedisTemplate<String, String> redisTemplate;
+    private final PaymentRepository paymentRepo;
 
-    public boolean isCustomer(String accountId) {
+    public Boolean isCustomer(String accountId) {
 
         String storedRole = Objects.requireNonNull(redisTemplate.opsForValue().get("account:" + accountId + ":role"));
         return storedRole.equals("customer");
     }
 
+
+    public Boolean matchWithOrder(String accountId, String orderId) {
+
+        PaymentEntity paymentEntity = paymentRepo.findById(orderId).orElseThrow();
+        return paymentEntity.getAccountId().equals(accountId);
+    }
+
+    public Boolean matchWithKey(String accountId, String paymentKey) {
+
+        PaymentEntity paymentEntity = paymentRepo.findById(paymentKey).orElseThrow();
+        return paymentEntity.getAccountId().equals(accountId);
+    }
     //SpEL이 실제로 쓰이는 곳:
     //@Value("#{systemProperties['user.home']}") 같은 프로퍼티 주입
     //@PreAuthorize("principal.username == #user.username") 같은 메서드 보안

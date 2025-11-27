@@ -2,13 +2,14 @@ package com.fhk.payment.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fhk.api.cllient.TossClient;
-import com.fhk.api.dto.PayDto;
-import com.fhk.api.dto.SearchDto;
+import com.fhk.api.dto.*;
 import com.fhk.api.dto.toss.Payment;
+import com.fhk.api.dto.toss.VirtualAccount;
 import com.fhk.payment.domain.PaymentEntity;
-import com.fhk.api.dto.ConfirmDto;
+import com.fhk.payment.domain.VirtualAccountEntity;
 import com.fhk.payment.dto.EventDto;
 import com.fhk.payment.repository.PaymentRepository;
+import com.fhk.payment.repository.VirtualAccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -31,10 +32,12 @@ public class PaymentService {
     //        get 같은 경우는 서비스 계층 스킵
     private final TossClient tossClient;
     private final PaymentRepository paymentRepo;
+    private final VirtualAccountRepository virtualAccountRepo;
     private final ModelMapper modelMapper;
     private final Executor executor = Executors.newFixedThreadPool(4);
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
+    private final Payment payment;
     //private final OutboxRepository outboxRepository;
 
 
@@ -43,8 +46,7 @@ public class PaymentService {
 
        PaymentEntity payment = modelMapper.map(payReq, PaymentEntity.class);
        paymentRepo.save(payment);
-       PayDto.Res payRes = new PayDto.Res(payReq.getOrderId(), "saved");
-       return payRes;
+        return new PayDto.Res(payReq.getOrderId(), "saved");
     }
 
 
@@ -68,6 +70,66 @@ public class PaymentService {
         }, executor);
 
         return new ConfirmDto.Res(payment);
+    }
+
+    //  THINK : 조회에 결제 객체와 사용자의 매칭을 확인해야 하는가
+    @PreAuthorize("@authEvaluator.matchWithOrder(#accountId, #orderId.getOrderId())")
+    public Payment searchByOrder(SearchDto.OrderId orderId, Long accountId) {
+
+        return tossClient.searchByOrder(orderId.getOrderId());
+    }
+
+    @PreAuthorize("@authEvaluator.matchWithKey(#accountId, #paymentKey.getPaymentKey())")
+    public Payment searchByPayment(SearchDto.PaymentKey paymentKey, Long accountId) {
+
+        return tossClient.searchByPayment(paymentKey.getPaymentKey());
+    }
+
+
+    @PreAuthorize("@authEvaluator.matchWithKey(#accountId, #cancelReq.getPaymentKey())")
+    public CancelDto.Res cancel(CancelDto.Req cancelReq, Long accountId) {
+
+        Payment payment = tossClient.cancel(cancelReq);
+
+        CompletableFuture.runAsync(() -> {
+
+            PaymentEntity paymentEntity = paymentRepo.findById(cancelReq.getPaymentKey()).orElseThrow();
+            paymentEntity.changeStatus(payment.getStatus());
+            paymentRepo.save(paymentEntity);
+
+            EventDto event = EventDto.builder()
+                    .type("")
+                    .action(payment.getStatus())
+                    .objectId(paymentEntity.getPaymentKey())
+                    .correlationId("").build();
+            publishEvent(event);
+
+        }, executor);
+
+        return new CancelDto.Res(payment.getStatus());
+    }
+
+
+    @PreAuthorize("@authEvaluator.isCustomer(#accountId)")
+    public VirtualDto.Res virtual(VirtualDto.Req virtualReq, Long accountId) {
+
+        Payment payment = tossClient.virtual(virtualReq);
+        VirtualAccount virtualAccount = payment.getVirtualAccount();
+        CompletableFuture.runAsync(() -> {
+
+            VirtualAccountEntity virtualAccountEntity  = modelMapper.map(virtualAccount, VirtualAccountEntity.class);
+            virtualAccountRepo.save(virtualAccountEntity);
+
+            EventDto event = EventDto.builder()
+                    .type("")
+                    .action("")
+                    .objectId(virtualAccountEntity.getAccountNumber())
+                    .correlationId("").build();
+            publishEvent(event);
+
+        }, executor);
+
+        return new VirtualDto.Res(virtualAccount);
     }
 
 
@@ -95,12 +157,5 @@ public class PaymentService {
 
     }
 
-    public Payment searchByOrder(SearchDto searchDto) {
-
-        tossClient.searchByOrder(orderId);
-        return
-    }
-
-    public Payment searchByPayment(String paymentKey) {}
 
 }

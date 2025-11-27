@@ -3,6 +3,7 @@ package com.fhk.payment.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -26,6 +27,15 @@ public class PaymentEntity {
     @Column
     private long amount;
 
+    @Column
+    private String status;
+
+    @Column
+    private LocalDateTime requestedAt;
+    @Column
+    private LocalDateTime approvedAt;
+    @Column
+    private LocalDateTime canceledAt;
 
     @Builder
     public PaymentEntity(String orderId, long amount) {
@@ -33,5 +43,9 @@ public class PaymentEntity {
         this.amount = amount;
     }
 
+    // Helper method
+    public void changeStatus(String status) {
+        this.status = status;
+    }
 
 }
