@@ -1,16 +1,15 @@
 package com.fhk.api.dto;
 
 import com.fhk.api.dto.toss.VirtualAccount;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 public class VirtualDto {
 
     @Getter
     @Setter
+    @Builder
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class Req {
 
         private Integer amount;
