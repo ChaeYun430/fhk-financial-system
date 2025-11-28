@@ -41,58 +41,59 @@ async function callUp(req, method, urlPath, extra = {}, overrideAT) {
 }
 
 
-
-// ----------------------------------------------------
-// 자동 갱신 및 프록시 함수
-// ----------------------------------------------------
+// ===== 자동 갱신 및 프록시 함수 =====
 async function proxyWithAutoRefresh(req, res, method, urlPath, extra = {}) {
 
     try {
 
-        const req = await callUp(req, method, urlPath, extra);
-        return res.status(req.status).json(req.data);
+        const reqUpstream = await callUp(req, method, urlPath, extra);
+        return res.status(reqUpstream.status).json(reqUpstream.data);
     } catch (error) {
 
-        const errorStatus = error?.response?.status ?? 500; // ?. (옵셔널 체이닝)
+        const errorStatus = error?.response?.status ?? 500;
         const isProtected = PROTECTED_PATH_RE.test(urlPath);
         const refreshToken = req.cookies?.RT;
+        const errorData = error?.response?.data;
 
-        if (errorStatus !== 401 || !isProtected) {
-            return res.status(errorStatus).json(error?.response?.data ?? {
-                isSuccess:false
+        // ===== 403 Forbidden 처리 (financial 멤버 서버 관련 문제) =====
+        if (errorStatus === 403) {
+            return res.status(403).json(errorData ?? {
+                isSuccess: false,
+                resMessage: "Forbidden: Not a registered or active member of this service."
             });
         }
 
-        if (!refreshToken) {
+        // ===== 401 Unauthorized 처리 (토큰/인증 서버 관련 문제) =====
+        if (errorStatus !== 401 || !isProtected) {
+            return res.status(errorStatus).json(errorData ?? { isSuccess:false });
+        }else if (!refreshToken) {
             clearAuthCookies(res, "no-rt-cookie");
             return res.status(401).json({ isSuccess:false, resMessage:"Unauthorized: No RT cookie" });
         }
 
+        // ===== 토큰 자동 갱신 시도 (FHK 인증 서버 호출) =====
         try {
-
-            const tokens = await withRefreshLock(refreshToken, async () => {
-
+            const tokens = await withRefreshLock(refreshToken, async (rt) => {
                 const authUpstream = axios.create({ baseURL: SECURITY_SERVER_URL, timeout: 5000 });
                 const refreshRes = await authUpstream.post("/auth/refresh", { refreshToken: rt });
-                const payload = refreshRes?.data?.result ?? rr?.data;
-
+                const payload = refreshRes?.data?.result ?? refreshRes?.data;
                 const at2 = payload?.accessToken;
                 const rt2 = payload?.refreshToken;
-
                 if (!at2 || !rt2) throw new Error("refresh-no-tokens");
-
                 return { at: at2, rt: rt2 };
             });
+
             setAuthCookies(res, { accessToken: tokens.at, refreshToken: tokens.rt });
             const reqRefreshed = await callUp(req, method, urlPath, extra, tokens.at);
-
             return res.status(reqRefreshed.status).json(reqRefreshed.data);
+
         } catch (errorRefreshed) {
 
             const errorStatus2 = errorRefreshed?.response?.status ?? 0;
-            if (errorStatus2 === 401 || errorStatus2 === 403) clearAuthCookies(res, "refresh-unauth");
-
-            return res.status(401).json({ isSuccess:false, resMessage:"Unauthorized" });
+            if (errorStatus2 === 401 || errorStatus2 === 403) {
+                clearAuthCookies(res, "refresh-unauth");
+            }
+            return res.status(errorStatus2).json({ isSuccess:false, resMessage:"Unauthorized: Session expired or invalid." });
         }
     }
 }
