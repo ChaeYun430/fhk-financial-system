@@ -52,6 +52,7 @@ subprojects { // setting.gradle에서 include된 모든 프로젝트에 공통�
         implementation files("${rootDir}/libs/fhk-common-1.0.0-plain.jar")
         implementation files("${rootDir}/libs/fhk-core-1.0.0-plain.jar")
         implementation files("${rootDir}/libs/fhk-security-core-1.0.0-plain.jar")
+        implementation files("${rootDir}/libs/fhk-api-metrics-client-1.0.0-plain.jar")
 
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
