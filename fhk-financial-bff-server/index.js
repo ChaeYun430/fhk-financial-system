@@ -1,11 +1,10 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import multer from "multer";
 import axios from "axios";
 import { SECURITY_SERVER_URL, ROUTING_MAP, FRONTEND_URL, PUBLIC_AUTH_PATH_RE, PROTECTED_PATH_RE, ALLOWED_ORIGINS, ASSET_SERVICE_URL } from "./config.js";
 import { proxyWithAutoRefresh, handleMultipartProxy, proxyAssetRequest } from "./proxy.js";
-import { clearAuthCookies, setAuthCookies, withRefreshLock } from "./authUtils";
+import { clearAuthCookies, setAuthCookies } from "./authUtils";
 
 
 const app = express();

@@ -1,4 +1,5 @@
 const refreshLocks = new Map();
+const COOKIE_BASE = { httpOnly: true, sameSite: "lax", path: "/", secure: process.env.NODE_ENV === "production" };
 
 function withRefreshLock(key, task) {
 
