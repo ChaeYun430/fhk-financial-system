@@ -1,10 +1,8 @@
-package com.fhk.customer;
+package com.fhk.customer.domain;
 
 import com.fhk.core.entity.BaseTimeEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fhk.customer.constant.CustomerStatus;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -20,6 +18,9 @@ public class CustomerEntity extends BaseTimeEntity {
     private Long customerId;
 
     @Column(nullable = false)
-    private String Status;
+    @Enumerated(EnumType.STRING)
+    private CustomerStatus Status;
 
+    private String customerName;
+    private String phone;
 }

@@ -1,6 +1,7 @@
 package com.fhk.store.domain;
 
 import com.fhk.core.entity.BaseTimeEntity;
+import com.fhk.store.constant.StoreStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,10 +30,10 @@ public class StoreEntity extends BaseTimeEntity {
     @Column(name = "bank_account", nullable = false, length = 50)
     private String bankAccount;
 
-/*    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private StoreStatus status;
-
+/*
     @Column(nullable = false, length = 50)
     private String category; // 업종
 
