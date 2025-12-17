@@ -1,0 +1,96 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.5' apply(false)
+    id 'io.spring.dependency-management' version '1.1.7' apply(false)
+}
+
+allprojects {
+    group = 'com.fhk'
+    version = 'v0.0.1'
+    sourceCompatibility = '17'
+    description = 'fhk-financial-client-service'
+
+
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+
+subprojects { // setting.gradle에서 include된 모든 프로젝트에 공통적으로 적용할 설정
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.springframework.boot'
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    ext {
+        springCloudVersion = "2025.0.0"
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
+        }
+    }
+
+    dependencies {
+
+        implementation files("${rootDir}/libs/fhk-common-1.0.0-plain.jar")
+        implementation files("${rootDir}/libs/fhk-core-1.0.0-plain.jar")
+        implementation files("${rootDir}/libs/fhk-security-core-1.0.0-plain.jar")
+        implementation files("${rootDir}/libs/fhk-asset-storage-client-1.0.0-plain.jar")
+        implementation files("${rootDir}/libs/fhk-api-metrics-client-1.0.0-plain.jar")
+
+
+        developmentOnly 'org.springframework.boot:spring-boot-devtools'
+        implementation 'org.springframework.boot:spring-boot-starter'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+        implementation 'org.modelmapper:modelmapper:3.1.0'
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+        implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+        implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+        runtimeOnly 'io.jsonwebtoken:jjwt-api:0.11.5'
+        annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+        runtimeOnly 'com.mysql:mysql-connector-j'
+        runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        implementation 'org.springframework.kafka:spring-kafka:3.3.3'
+
+        implementation 'io.github.cdimascio:java-dotenv:5.2.2'
+        implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+        implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
+
+        implementation 'com.github.toss:toss-cert-java-sdk:0.0.14'
+        implementation platform("software.amazon.awssdk:bom:2.25.30")
+        implementation "software.amazon.awssdk:s3"
+        implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    }
+
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
+
+}
