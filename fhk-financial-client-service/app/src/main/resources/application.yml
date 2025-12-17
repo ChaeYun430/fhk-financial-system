@@ -1,0 +1,66 @@
+server:
+  port: ${SERVER_PORT}
+
+spring:
+  application:
+    name: fhk-financial-client-service
+  datasource:
+    password: ${DB_PW}
+    driver-class-name: ${DB_DRIVER}
+    username: ${DB_USER}
+    url: ${DB_URL}
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: '1000'
+        format_sql: 'true'
+        show_sql: 'true'
+    hibernate:
+      ddl-auto: update
+    database-platform: ${DB_PLATFORM}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
+jwt:
+  issuer: # 발급 서버에서 사용
+    private-key-path: ${PRIVATE_KEY_PATH}
+    access-expire-ms: 900000       # 15분
+    refresh-expire-ms: 1209600000   # 14일
+
+  verifier: # JWT 인증시 사용
+    public-key-path: ${PUBLIC_KEY_PATH}
+
+logging:
+  level:
+    org:
+      springframework:
+        security: trace
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
+      com:
+        fhk:
+          security:
+            core:
+              jwt:
+                filter: trace
+
+toss:
+  cert:
+    enabled: true
+    client-id: test_a8e23336d673ca70922b485fe806eb2d
+    client-secret: test_418087247d66da09fda1964dc4734e453c7cf66a7a9e3
+
+
+fhk:
+  storage:
+    s3:
+      base-key-prefix:
+      bucket:
+      cdn-base-url:
+
+  asset-service:
+    base-url: http://fhk-asset-service:8080

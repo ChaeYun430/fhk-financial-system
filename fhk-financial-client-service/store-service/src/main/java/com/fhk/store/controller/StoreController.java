@@ -11,7 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/store")
+@RequestMapping("/api/store")
 @RequiredArgsConstructor
 public class StoreController {
 
@@ -36,13 +36,20 @@ public class StoreController {
         return ApiResponse.ok(principal);
     }
 
+    ///*    IdRequestDto.Req req = new IdRequestDto.Req();
+    //        tossIdentificationClient.requestIdentification(req);*/
+    //    // if(res.getResultStatus.equals("SUCCESS"))
     // POLICY : 현재 계정을 가맹점 계정으로 연결한다.
-    @PostMapping()
-    public ResponseEntity<?> registerStore(@AuthenticationPrincipal FhkUserPrincipal principal) {
+    @PostMapping("license")
+    public ResponseEntity<?> createLicense(@AuthenticationPrincipal FhkUserPrincipal principal) {
         Long accountId = principal.id();
+        // 본인 인증, 사업자 인증
+        // 셀러 등록, 승인 후 상태 전환
 
         return ApiResponse.ok(principal);
     }
+
+
 
     // POLICY : 본인이 가맹점 정보 수정
     @PutMapping()

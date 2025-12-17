@@ -1,0 +1,9 @@
+
+dependencies {
+    implementation project(":store-service")
+    implementation project(":customer-service")
+    implementation project(":api-identification")
+
+
+}
+

@@ -1,6 +1,5 @@
 package com.fhk.store.dto;
 
-import com.fhk.customer.constant.CustomerStatus;
 import com.fhk.store.constant.StoreStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

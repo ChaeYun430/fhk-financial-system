@@ -14,13 +14,31 @@ import lombok.*;
 public class CustomerEntity extends BaseTimeEntity {
 
     // POLICY : 결제 시스템 서비스에 사용자로 등록되었는지 확인
-    @Id
-    private Long customerId;
+
+    @Id     // 회원의 서비스 내부 접근
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String customerId;
+
+    // 회원의 외부 접근
+    @Column(nullable = false, unique = true)
+    private Long accountId;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private CustomerStatus Status;
 
+    @Column(nullable = false)
     private String customerName;
-    private String phone;
+
+    @Column(nullable = false)
+    private String birth;
+
+    @Column
+    private String email;
+
+    public CustomerEntity changeCustomerStatus(CustomerStatus status) {
+        this.Status = status;
+        return this;
+    }
+
 }

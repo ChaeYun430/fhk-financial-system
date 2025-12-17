@@ -3,22 +3,12 @@ package com.fhk.customer.dto;
 import com.fhk.customer.constant.CustomerStatus;
 import lombok.*;
 
-@NoArgsConstructor
-@Getter
-public class LicenseDto {
+public class ChangeInfoDto {
 
     @Data
-    @Builder
     public static class Req {
 
         private Long accountId;
-
-    }
-
-    @Data
-    public static class Res {
-
-        private String customerId;
 
         private String customerName;
 
@@ -26,6 +16,13 @@ public class LicenseDto {
 
         private String email;
 
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Res {
         private CustomerStatus customerStatus;
     }
 }

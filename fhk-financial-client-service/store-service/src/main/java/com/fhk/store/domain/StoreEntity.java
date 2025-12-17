@@ -15,8 +15,8 @@ public class StoreEntity extends BaseTimeEntity {
 
     @Id
     @Column(name = "store_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long storeId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String storeId;
 
     @Column(name = "owner_account_id", nullable = false)
     private Long owner;   // 가맹점주 계정 id
@@ -46,5 +46,8 @@ public class StoreEntity extends BaseTimeEntity {
     @Column(name = "logo_url", length = 255)
     private String logoUrl; // 로고 이미지 URL*/
 
-
+    public StoreEntity changeStatus(StoreStatus status) {
+        this.status = status;
+        return this;
+    }
 }

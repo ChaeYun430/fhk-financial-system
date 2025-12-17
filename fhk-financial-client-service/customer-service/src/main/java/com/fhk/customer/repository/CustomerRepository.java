@@ -3,7 +3,9 @@ package com.fhk.customer.repository;
 import com.fhk.customer.domain.CustomerEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CustomerRepository extends JpaRepository<CustomerEntity, Long> {
+import java.util.Optional;
 
-    boolean existsByCustomerId(Long customerId);
+public interface CustomerRepository extends JpaRepository<CustomerEntity, String> {
+
+    Optional<CustomerEntity> findCustomerEntityByAccountId(Long accountId);
 }
