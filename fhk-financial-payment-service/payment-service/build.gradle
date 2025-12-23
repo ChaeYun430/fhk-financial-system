@@ -1,0 +1,9 @@
+dependencies {
+
+    implementation project(':fhk-financial-payment-service:api-pgclient')
+
+
+}
+
+bootJar { enabled = false }
+jar { enabled = true }

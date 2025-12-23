@@ -1,0 +1,7 @@
+dependencies {
+	implementation project(":fhk-financial-payment-service:api-pgclient")
+	implementation project(":fhk-financial-payment-service:payment-service")
+
+
+
+}

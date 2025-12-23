@@ -1,0 +1,4 @@
+description = 'fhk-financial-payment-service'
+
+bootJar { enabled = false }
+jar { enabled = true }
