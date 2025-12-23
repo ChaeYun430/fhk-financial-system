@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fhk-financial-client-service
+  namespace: staging
+  labels:
+    app: fhk-financial-client-service
+    env: staging
+spec:
+  type: ClusterIP
+  selector:
+    app: fhk-financial-client-service
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080

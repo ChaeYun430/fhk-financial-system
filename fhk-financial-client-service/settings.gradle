@@ -1,6 +1,0 @@
-rootProject.name = 'fhk-financial-client-service'
-
-include("customer-service")
-include("store-service")
-include("app")
-include("api-identification")
