@@ -1,7 +1,9 @@
 dependencies {
 
-    implementation project(':api-pgclient')
-    testImplementation project(':api-pgclient')
-    testFixturesImplementation project(':api-pgclient')
+    implementation project(':fhk-financial-payment-service:api-pgclient')
+
 
 }
+
+bootJar { enabled = false }
+jar { enabled = true }

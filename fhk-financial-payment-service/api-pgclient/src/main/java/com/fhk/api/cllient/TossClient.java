@@ -23,7 +23,7 @@ public class TossClient implements PgClient {
         private final String baseUrl = "https://api.tosspayments.com";
 
 
-        public TossClient(@Value("${tosspayments.secret-key}") String secretKey){
+        public TossClient(@Value("${toss.payments.secret-key}") String secretKey){
 
             this.restTemplate = new RestTemplate();
             restTemplate.getInterceptors().add((request, body, execution) -> {
@@ -78,6 +78,8 @@ public class TossClient implements PgClient {
             String virtualUrl = baseUrl + "/v1/virtual-accounts";
             return restTemplate.postForObject(virtualUrl, virtualReq, Payment.class);
         }
+
+
 
 }
 

@@ -11,6 +11,6 @@ public class VirtualAccount {
 
     private String accountNumber;
     private String bank;
-    private String customerName;
+    private String clientName;
     private LocalDateTime dueDate;
 }

@@ -24,7 +24,6 @@ import java.util.concurrent.Executors;
 @Service
 @Log4j2
 @RequiredArgsConstructor
-@Import({TossClient.class, ModelMapper.class, Payment.class})
 public class PaymentService {
 
     // TODO : 특정 토픽을 지정하여 이벤트 발행
@@ -37,7 +36,6 @@ public class PaymentService {
     private final Executor executor = Executors.newFixedThreadPool(4);
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final ObjectMapper objectMapper;
-    private final Payment payment;
     //private final OutboxRepository outboxRepository;
 
 
