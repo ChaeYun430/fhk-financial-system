@@ -1,0 +1,15 @@
+rootProject.name = 'fhk-financial-system'
+
+include 'fhk-financial-client-service'
+include 'fhk-financial-client-service:customer-service'
+include 'fhk-financial-client-service:store-service'
+include 'fhk-financial-client-service:api-identification'
+include 'fhk-financial-client-service:app'
+
+include 'fhk-financial-payment-service'
+include 'fhk-financial-payment-service:payment-service'
+include 'fhk-financial-payment-service:api-pgclient'
+include 'fhk-financial-payment-service:app'
+
+//include 'fhk-financial-ops-service'
+
