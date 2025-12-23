@@ -28,7 +28,7 @@ public class StoreService {
 
     public LicenseDto.Res getLicense(LicenseDto.Req licenseDtoReq) {
 
-        Optional<StoreEntity> storeEntity = storeRepo.findCustomerEntityByAccountId(licenseDtoReq.getAccountId());
+        Optional<StoreEntity> storeEntity = storeRepo.findStoreEntityByAccountId(licenseDtoReq.getAccountId());
         if (storeEntity.isEmpty()) {
             return LicenseDto.Res.builder()
                     .isRegistered(false).build();

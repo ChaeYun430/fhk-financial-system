@@ -1,0 +1,6 @@
+bootJar { enabled = false }
+jar { enabled = true }
+
+dependencies {
+    implementation 'com.github.toss:toss-cert-java-sdk:0.0.14'
+}
