@@ -1,9 +1,5 @@
-
 dependencies {
-    implementation project(":store-service")
-    implementation project(":customer-service")
-    implementation project(":api-identification")
-
-
+    implementation project(':fhk-financial-client-service:api-identification')
+    implementation project(':fhk-financial-client-service:customer-service')
+    implementation project(':fhk-financial-client-service:store-service')
 }
-

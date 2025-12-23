@@ -18,8 +18,8 @@ public class StoreEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String storeId;
 
-    @Column(name = "owner_account_id", nullable = false)
-    private Long owner;   // 가맹점주 계정 id
+    @Column(name = "account_id", nullable = false)
+    private Long accountId;   // 가맹점주 계정 id
 
     @Column(name = "store_name", nullable = false, length = 100)
     private String storeName;   // 상호명

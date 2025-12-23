@@ -1,4 +1,7 @@
-dependencies{
+// 필요 시 추가 의존성
+dependencies {
+    implementation project(':fhk-financial-client-service:api-identification')
 
-    implementation project(":api-identification")
 }
+bootJar { enabled = false }
+jar { enabled = true }

@@ -1,4 +1,2 @@
-description='fhk-financial-client-service'
-
 bootJar { enabled = false }
 jar { enabled = true }

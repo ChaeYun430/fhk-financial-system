@@ -22,6 +22,8 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
+  config:
+    import: file:financial-client.properties
 
 jwt:
   issuer: # 발급 서버에서 사용
