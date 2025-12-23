@@ -1,7 +1,0 @@
-rootProject.name = 'fhk-financial-payment-service'
-
-include("api-pgclient")
-include("group-pay-service")
-include("payment-service")
-include("refund-service")
-include("settlement-service")

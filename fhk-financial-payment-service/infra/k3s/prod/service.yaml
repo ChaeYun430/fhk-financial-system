@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fhk-financial-payment-service
+  namespace: prod
+  labels:
+    app: fhk-financial-payment-service
+    env: prod
+spec:
+  type: ClusterIP
+  selector:
+    app: fhk-financial-payment-service
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
